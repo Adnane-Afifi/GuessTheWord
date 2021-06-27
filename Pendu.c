@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <time.h>
 
 void introduceUser(char* word , char guess[],int attempt){
 int lengthWord=6;
@@ -43,18 +44,66 @@ void startGame(char * word,char guess[],int attempt){
          printf("----->%d\n",count);
        }
     }
-    printf("FINALCOUNT----->%d\n",count);
-    printf("FINALWORD----->%zu\n",strlen(word));
     if(count==strlen(word)){
         attempt--;
     }
     count=0;
     printf("Number of attempt remaining  ::%d  \n",attempt);
 }
+
+
 if(attempt>0 && strcmp(word,guess)==0){
     printf("GG , YOU WIN!!! the word was %s \n",guess);
 }
+
+
 else{
-    printf("OH ! maybe next time ! \n");
+    printf("OH ! maybe next time it was %s ! \n",word);
 }
+
+
+}
+int  getNumberElementFile(){
+   const char * namefile = "names.txt";
+   FILE * file = fopen(namefile,"r");
+   int count =0 ;
+   char endofLine = ' ';
+   if(file!=NULL){
+   while(endofLine!=EOF){
+       endofLine=fgetc(file);
+      if(endofLine=='\n')count++;
+   }
+   }
+   else{
+       printf("ERROR can not read  %s   !",namefile);
+   }
+   fclose(file);
+   
+ return count;
+}
+int generateNumber(){
+    srand(time(NULL));
+    int generateNumber = 1;
+     generateNumber=rand()%getNumberElementFile()+1;
+    return generateNumber;
+}
+
+char * getSecretWord(){
+    int count=0;
+    FILE * file = fopen("names.txt","r");
+    char * word = (char *) malloc(sizeof(char )*20);
+    while(count!=generateNumber() && word!=NULL){
+        word=fgets(word,100,file);
+        count++;
+    }
+    return word;
+}
+
+ char * genGuessWord(char * word){
+   size_t length = strlen(word);
+   char * guessWord =(char *) malloc(sizeof(char )*length);
+   for( size_t i =0 ; i<length;i++){
+    guessWord[i]='*';
+   } 
+   return guessWord;
 }
